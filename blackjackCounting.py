@@ -1,4 +1,5 @@
 import turtle
+from turtle import Turtle, Screen, mainloop
 import random
 
 bob = turtle.Turtle()
@@ -11,7 +12,7 @@ def drawCard(card, x, y, faceDown=False):
     bob.up()
     bob.goto(x, y)
     bob.down()
-    bob.color("white")
+    bob.color("black")
     bob.begin_fill()
     bob.setheading(0)
     bob.forward(100)
@@ -29,7 +30,9 @@ def drawCard(card, x, y, faceDown=False):
     bob.forward(152)
     bob.setheading(60)
     bob.forward(5)
+    bob.color("white")
     bob.end_fill()
+    bob.up()
     if not faceDown:
         bob.setheading(0)
         bob.forward(55)
@@ -37,9 +40,10 @@ def drawCard(card, x, y, faceDown=False):
         bob.forward(76)
         bob.color("black")
         bob.write(card, align="center", font=("Arial", 50, "normal"))
-    bob.up()
 
-def playerPlay(card, playerTotal):
+def playerDraw(playerTotal):
+    print("Hello")
+def playerStand(playerTotal):
     pass
 
 def dealerPlay(card, dealerTotal):
@@ -48,19 +52,24 @@ def dealerPlay(card, dealerTotal):
 def playBlackjack(deck):
     dealerTotal = 0
     playerTotal = 0
+    playerTurn = True
     faceDown = False
-    while True:
-        if not deck:
-            break
-        
-        for i in range(2):
+    playerCard = -200
+    dealerCard = -200
+
+    for i in range(2):
+            
+            # Gives out card to player
             card = deck[0]
             deck.pop(0)
             if card in ["A", "J", "Q", "K"]:
                 playerTotal += 10
             else:
                 playerTotal += int(card)
-            drawCard(card, -50, 50)
+            drawCard(card, playerCard, -100)
+            playerCard += 120
+
+            # Gives out card to dealer, second one facedown
             if faceDown:
                 card = deck[0]
                 deck.pop(0)
@@ -68,8 +77,9 @@ def playBlackjack(deck):
                     dealerTotal += 10
                 else:
                     dealerTotal += int(card)
-                drawCard(card, -50, 50, faceDown)   
+                drawCard(card, dealerCard, 200, faceDown)   
                 faceDown = False
+                dealerCard += 120
             else:
                 card = deck[0]
                 deck.pop(0)
@@ -77,21 +87,21 @@ def playBlackjack(deck):
                     dealerTotal += 10
                 else:
                     dealerTotal += int(card)
-                drawCard(card, -50, 50)  
-                faceDown = True  
+                drawCard(card, dealerCard, 200)  
+                faceDown = True
+                dealerCard += 120
 
-        if playerTotal < 21:
-            playerPlay(card, playerTotal)
+    screen = Screen()
+    while True:
+        # Check if deck is empty
+        if not deck:
+            break
 
-
-
-
-
-
-
-        
-
-
+        if playerTurn:
+            turtle.onkey(playerDraw(playerTotal), "h")
+            turtle.onkey(playerStand, "s")
+            turtle.listen()
+            mainloop()
 
 
 
