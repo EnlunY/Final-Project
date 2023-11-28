@@ -107,4 +107,8 @@ def playBlackjack(deck):
 
 
 playBlackjack(deck)
+<<<<<<< HEAD
 turtle.done()
+=======
+turtle.done()
+>>>>>>> 4fc889b7326c37649f59f7e35ba9dc78862d9dda
