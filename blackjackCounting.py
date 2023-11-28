@@ -109,4 +109,4 @@ def playBlackjack(deck):
 playBlackjack(deck)
 turtle.done()
 
-# test5
+# test6
