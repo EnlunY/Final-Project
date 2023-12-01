@@ -1,2 +1,2 @@
 # Final-Project
-Blackjack Card Counting Crainer
+Blackjack Card Counting Trainer
