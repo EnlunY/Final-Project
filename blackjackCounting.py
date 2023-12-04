@@ -105,16 +105,16 @@ def playBlackjack(deck):
 
 def table():
     bob.up()
-    bob.goto()
+    bob.goto(-500,250)
     bob.down()
-    bob.fillcolor("green")
-    bob.begin_fill()
+    bob.color("green")
     for i in range(4):
-        bob.forward(500)
+        bob.begin_fill()
+        bob.forward(1000)
         bob.right(90)
-        bob.forward(300)
+        bob.forward(600)
         bob.right(90)
-    bob.end_fill()
+        bob.end_fill()
     
 table()
 
