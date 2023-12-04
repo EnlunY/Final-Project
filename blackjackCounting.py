@@ -4,9 +4,13 @@ import random
 
 bob = turtle.Turtle()
 bob.speed(-1)
+count = 0
 turtle.bgcolor("#bf693d")
 deck = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] * 24
+add = ["2", "3", "4", "5", "6"]
+minus = ["10", "J", "Q", "K", "A"]
 random.shuffle(deck)
+
 
 def drawCard(card, x, y, faceDown=False):
     bob.up()
@@ -41,67 +45,124 @@ def drawCard(card, x, y, faceDown=False):
         bob.color("black")
         bob.write(card, align="center", font=("Arial", 50, "normal"))
 
-def playerDraw(playerTotal):
-    print("Hello")
-def playerStand(playerTotal):
-    pass
 
-def dealerPlay(card, dealerTotal):
-    pass
+def playerDeal():
+    global playerCardLoc
+    global playerTotal
+    global count
+    card = deck[0]
+    deck.pop(0)
+    if card in minus:
+        playerTotal += 10
+        count -= 1
+    elif card in add:
+        playerTotal += int(card)
+        count += 1
+    else:
+        playerTotal += int(card)
+
+    drawCard(card, playerCardLoc, -100)
+    playerCardLoc += 120
+
+
+def dealerDeal(faceDown=False):
+    global dealerCardLoc
+    global dealerTotal
+    global count
+    dealerCard = deck[0]
+    deck.pop(0)
+    if dealerCard in minus:
+        dealerTotal += 10
+        count -= 1
+    elif dealerCard in add:
+        dealerTotal += int(dealerCard)
+        count += 1
+    else:
+        dealerTotal += int(dealerCard)
+    drawCard(dealerCard, dealerCardLoc, 200, faceDown) 
+    if not faceDown: 
+        dealerCardLoc += 120
+    return dealerCard
+
 
 def playBlackjack(deck):
-    dealerTotal = 0
-    playerTotal = 0
-    playerTurn = True
+    playerBust = False
     faceDown = False
-    playerCard = -200
-    dealerCard = -200
+    global dealerCardLoc
+    global playerTotal
+    global dealerTotal
+    global count
 
     for i in range(2):
-            
-            # Gives out card to player
-            card = deck[0]
-            deck.pop(0)
-            if card in ["A", "J", "Q", "K"]:
-                playerTotal += 10
-            else:
-                playerTotal += int(card)
-            drawCard(card, playerCard, -100)
-            playerCard += 120
+        playerDeal()
 
-            # Gives out card to dealer, second one facedown
-            if faceDown:
-                card = deck[0]
-                deck.pop(0)
-                if card in ["A", "J", "Q", "K"]:
-                    dealerTotal += 10
-                else:
-                    dealerTotal += int(card)
-                drawCard(card, dealerCard, 200, faceDown)   
-                faceDown = False
-                dealerCard += 120
-            else:
-                card = deck[0]
-                deck.pop(0)
-                if card in ["A", "J", "Q", "K"]:
-                    dealerTotal += 10
-                else:
-                    dealerTotal += int(card)
-                drawCard(card, dealerCard, 200)  
-                faceDown = True
-                dealerCard += 120
+        # Gives out card to dealer, second one facedown
+        if faceDown:
+            dealerCard = dealerDeal(faceDown)
+        else:
+            dealerDeal()
+            faceDown = True
 
-    screen = Screen()
+    # Player's turn
     while True:
-        # Check if deck is empty
-        if not deck:
-            break
+        # Allows user to hit or stand
+        decision = input("Hit (h/hit) or Stand (s/stand): ")
+        if decision in ["h", "hit", "H", "Hit"]:
+            playerDeal()
+            if playerTotal > 21:
+                drawCard(dealerCard, dealerCardLoc, 200)  
+                print("Bust, you lose")
+                playerBust = True
+                break
 
-        if playerTurn:
-            turtle.onkey(playerDraw(playerTotal), "h")
-            turtle.onkey(playerStand, "s")
-            turtle.listen()
-            mainloop()
+        elif decision in ["s", "stand", "S", "Stand"]:
+            break
+        else:
+            print("Invalid entry")
+    
+    # Dealer's turn
+    if not playerBust:
+        # Redraws facedown card
+        drawCard(dealerCard, dealerCardLoc, 200)  
+        dealerCardLoc += 120      
+        while True:  
+            # Draws card if total is < 17
+            if dealerTotal < 17:
+                dealerDeal()
+            elif dealerTotal > 21:
+                print("Dealer bust, you win")
+                break       
+            elif dealerTotal > playerTotal:
+                print("You lose")
+                break
+            elif dealerTotal < playerTotal:
+                print("You win")
+                break
+            elif dealerTotal == playerTotal:
+                print("Tie")
+                break
+                
+
+while True:
+    playerCardLoc = -200
+    dealerCardLoc = -200
+    dealerTotal = 0
+    playerTotal = 0
+    playBlackjack(deck)
+    
+    # Count request?
+    countReq = input("Display count? (y/yes) or (n/no): ")
+    if countReq in ["y", "yes", "Y", "Yes"]:
+        print("Count:", count)
+    
+    # Keep playing?
+    again = input("Keep playing? (y/yes) or (n/no): ")
+    if again in ["y", "yes", "Y", "Yes"]:
+        bob.clear()
+        continue
+    elif again in ["n", "no", "N", "No"]:
+        break
+
 
 def table():
     bob.up()
@@ -120,6 +181,4 @@ table()
 
 
 
-playBlackjack(deck)
-turtle.done()
 
