@@ -141,6 +141,21 @@ def playBlackjack(deck):
             elif dealerTotal == playerTotal:
                 print("Tie")
                 break
+def table():
+    bob.up()
+    bob.goto(-500,250)
+    bob.down()
+    bob.color("green")
+    for i in range(4):
+        bob.begin_fill()
+        bob.forward(1000)
+        bob.right(90)
+        bob.forward(600)
+        bob.right(90)
+        bob.end_fill()
+    
+             
+table()
                 
 
 while True:
