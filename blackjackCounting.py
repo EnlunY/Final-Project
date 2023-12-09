@@ -1,13 +1,21 @@
 import turtle
 from turtle import Turtle, Screen, mainloop
 import random
+from tkinter import PhotoImage
+from turtle import Turtle, Screen, Shape
+
+# Makes table image
+screen = Screen()
+smaller = PhotoImage(file="table.gif").subsample(2, 2)
+screen.addshape("larger", Shape("image", smaller))
+tortoise = Turtle("larger")
+tortoise.speed(-1)
+tortoise.stamp()
+tortoise.hideturtle()
 
 bob = turtle.Turtle()
-tom = turtle.Turtle()
-tom.speed(-1)
 bob.speed(-1)
 count = 0
-turtle.bgcolor("#bf693d")
 deck = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] * 24
 add = ["2", "3", "4", "5", "6"]
 minus = ["10", "J", "Q", "K"]
@@ -80,7 +88,7 @@ def playerDeal():
         playerTotal += int(card)
         playerCards.append(card)
 
-    drawCard(card, playerCardLoc, -100)
+    drawCard(card, playerCardLoc, -200)
     playerCardLoc += 120
 
 
@@ -182,6 +190,7 @@ def playBlackjack(bet):
                     drawCard(dealerCard, dealerCardLoc, 200)  
                     print("Bust, you lose")
                     playerBust = True
+                    bank -= bet
                     break
 
         elif decision in ["s", "stand", "S", "Stand"]:
@@ -224,25 +233,12 @@ def playBlackjack(bet):
             elif dealerTotal == playerTotal:
                 print("Tie")
                 break
-def table():
-    tom.up()
-    tom.goto(-500,250)
-    tom.down()
-    tom.color("green")
-    for i in range(4):
-        tom.begin_fill()
-        tom.forward(1000)
-        tom.right(90)
-        tom.forward(600)
-        tom.right(90)
-        tom.end_fill()
 
 
 # Runs blackjack until the user says to stop
-table()
 while True:
-    playerCardLoc = -200
-    dealerCardLoc = -200
+    playerCardLoc = -300
+    dealerCardLoc = -300
     dealerTotal = 0
     playerTotal = 0
     playerCards = []
