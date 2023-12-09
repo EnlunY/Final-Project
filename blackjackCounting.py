@@ -133,16 +133,23 @@ def dealerDeal(faceDown=False, upcard=False):
 
 def optimalMove(playerTotal, dealerTotal):
     upcard = list(dealerUpcard.values())
-    if playerTotal >= 17 or playerTotal in [13, 14, 15, 16] and upcard[0] >= 2 and upcard[0] <= 6 or playerTotal == 12 and upcard[0] >= 4 and upcard[0] <= 6:
-        return ["s", "stand", "S", "Stand"]
+    if "A" not in playerCards:
+        if playerTotal >= 17 or (playerTotal in [13, 14, 15, 16] and upcard[0] >= 2 and upcard[0] <= 6) or (playerTotal == 12 and upcard[0] >= 4 and upcard[0] <= 6):
+            return ["s", "stand", "S", "Stand"]
+        elif playerTotal == 11 or playerTotal == 10 and upcard[0] <= 9 or (playerTotal == 9 and upcard[0] <= 6 and upcard[0] >= 3):
+            return ["d", "double", "D", "Double"]
+        else:
+            return ["h", "hit", "H", "Hit"]
     else:
-        return ["h", "hit", "H", "Hit"]
+        if playerTotal == 20 or playerTotal == 19 and upcard[0] != 6 or (playerTotal == 18 and upcard[0] == 7 or upcard[0] == 8):
+            return ["s", "stand", "S", "Stand"]
 
 
 
 def playBlackjack(bet):
     playerBust = False
     faceDown = False
+    double = False
     global playerCards
     global dealerCards
     global dealerCardLoc
@@ -165,7 +172,7 @@ def playBlackjack(bet):
     # Player's turn
     while True:
         # Allows user to hit or stand
-        decision = input("Hit (h/hit) or Stand (s/stand): ")
+        decision = input("Hit (h/hit), Stand (s/stand), or Double (d/double): ")
         if decision in optimalMove(playerTotal, dealerTotal):
             print("Correct decision")
         else:
@@ -182,16 +189,36 @@ def playBlackjack(bet):
                     drawCard(dealerCard, dealerCardLoc, 200)  
                     print("Bust, you lose")
                     playerBust = True
+                    if double:
+                        bank -= bet * 2
+                    else:
+                        bank -= bet
                     break
-
+        elif decision in ["d", "double", "D", "Double"]:
+            double = True
+            playerDeal()
+            if playerTotal > 21:
+                if "A" in playerCards[0] or "A" in playerCards[1]:
+                    playerCards.remove("A")
+                    playerTotal -= 10
+                    continue
+                else:
+                    drawCard(dealerCard, dealerCardLoc, 200)  
+                    print("Bust, you lose")
+                    playerBust = True
+                    if double:
+                        bank -= bet * 2
+                    else:
+                        bank -= bet
+                    break
         elif decision in ["s", "stand", "S", "Stand"]:
             break
         else:
             print("Invalid entry")
     
-    # Dealer's turn
+    # Dealer's turn and finishes the play
     if not playerBust:
-        # Redraws facedown card
+        # Reveals facedown card
         drawCard(dealerCard, dealerCardLoc, 200)  
         dealerCardLoc += 120      
         while True:  
@@ -199,9 +226,25 @@ def playBlackjack(bet):
             if dealerTotal == 21 and "A" in dealerCards:
                 if playerTotal == 21 and "A" in playerCards:
                     print("Tie")
+                    break
                 else:
                     print("You lose")
-                    bank -= bet
+                    if double:
+                        bank -= bet * 2
+                    else:
+                        bank -= bet
+                    break
+            elif playerTotal == 21 and "A" in playerCards:
+                if dealerTotal == 21 and "A" in dealerCards:
+                    print("Tie")
+                    break
+                else:
+                    print("You win")
+                    if double:
+                        bank += bet * 2 * 1.5
+                    else:
+                        bank -= bet
+                    break
             elif dealerTotal < 17:
                 dealerDeal()
             elif dealerTotal > 21:
@@ -211,15 +254,24 @@ def playBlackjack(bet):
                     continue
                 else:
                     print("Dealer bust, you win")
-                    bank += bet * 1.5
+                    if double:
+                        bank += bet * 2 * 1.5
+                    else:
+                        bank += bet * 1.5
                     break       
             elif dealerTotal > playerTotal:
                 print("You lose")
-                bank -= bet
+                if double:
+                    bank -= bet * 2
+                else:
+                    bank -= bet
                 break
             elif dealerTotal < playerTotal:
                 print("You win")
-                bank += bet * 1.5
+                if double:
+                    bank += bet * 2 * 1.5
+                else:
+                    bank += bet * 1.5
                 break
             elif dealerTotal == playerTotal:
                 print("Tie")
