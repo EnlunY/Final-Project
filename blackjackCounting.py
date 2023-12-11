@@ -152,7 +152,7 @@ def optimalMove(playerTotal, dealerTotal):
     else:
         if playerTotal == 21 or (playerTotal == 20 or playerTotal == 19) and upcard[0] != 6 or (playerTotal == 18 and upcard[0] == 7 or upcard[0] == 8):
             return ["s", "stand", "S", "Stand"]
-        elif playerTotal == 19 and upcard[0] == 6 or (playerTotal == 18 and upcard[0] >= 2 or upcard[0] <= 6) or (playerTotal == 17 and upcard[0] >= 3 or upcard[0] <= 6) or (playerTotal == 16 or playerTotal == 15 and upcard[0] >= 4 or upcard[0] <= 6) or (playerTotal == 14 or playerTotal == 13 and upcard[0] == 5 or upcard[0] == 6):
+        elif playerTotal == 19 and upcard[0] == 6 or (playerTotal == 18 and upcard[0] >= 2 or upcard[0] <= 6) or (playerTotal == 17 and upcard[0] >= 3 or upcard[0] <= 6) or (playerTotal == 16 or playerTotal == 15 and upcard[0] >= 4 or upcard[0] <= 6) or playerTotal == 14 or playerTotal == 13 and upcard[0] == 5 or upcard[0] == 6:
             return ["d", "double", "D", "Double"]
         else:
             return ["h", "hit", "H", "Hit"]
@@ -185,16 +185,27 @@ def playBlackjack(bet):
     while True:
         # Allows user to hit, stand, or double
         decision = input("Hit (h/hit), Stand (s/stand), or Double (d/double): ")
-        if decision in optimalMove(playerTotal, dealerTotal):
-            print("Correct decision")
+        basicStrategy = optimalMove(playerTotal, dealerTotal)
+        if decision in basicStrategy:
+            if "s" in basicStrategy:
+                print("Correct,", playerTotal, "stands against", list(dealerUpcard.values())[0])
+            elif "h" in basicStrategy:
+                print("Correct,", playerTotal, "hits against", list(dealerUpcard.values())[0])
+            elif "d" in basicStrategy:
+                print("Correct,", playerTotal, "doubles against", list(dealerUpcard.values())[0])
         else:
-            print("Wrong decision")
+            if "s" in basicStrategy:
+                print("Incorrect,", playerTotal, "stands against", list(dealerUpcard.values())[0])
+            elif "h" in basicStrategy:
+                print("Incorrect,", playerTotal, "hits against", list(dealerUpcard.values())[0])
+            elif "d" in basicStrategy:
+                print("Incorrect,", playerTotal, "doubles against", list(dealerUpcard.values())[0])
 
         if decision in ["h", "hit", "H", "Hit"]:
             playerDeal()
             if playerTotal > 21:
                 if "A" in playerCards[0] or "A" in playerCards[1]:
-                    aces = playerCards.count()
+                    aces = playerCards.count("A")
                     for i in range(aces):
                         playerCards.remove("A")
                     playerTotal -= 10
@@ -262,8 +273,9 @@ def playBlackjack(bet):
                 dealerDeal()
             elif dealerTotal > 21:
                 if "A" in dealerCards:
-                    dealerCards.remove("A")
-                    dealerTotal -= 10
+                    aces = dealerCards.count("A")
+                    for i in range(aces):
+                        dealerCards.remove("A")
                     continue
                 else:
                     print("Dealer bust, you win")
