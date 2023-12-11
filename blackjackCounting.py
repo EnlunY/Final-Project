@@ -14,7 +14,6 @@ tortoise.stamp()
 tortoise.hideturtle()
 
 bob = turtle.Turtle()
-bob.ht()
 bob.speed(-1)
 count = 0
 deck = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] * 24
@@ -105,13 +104,13 @@ def dealerDeal(faceDown=False, upcard=False):
         if dealerTotal + 11 > 21:
             dealerTotal += 1
             count -= 1
-            dealerCards.append(dealerCard)
+            playerCards.append(dealerCard)
             if upcard:
                 dealerUpcard["A"] = 1
         else:
             dealerTotal += 11
             count -= 1
-            dealerCards.append(dealerCard)
+            playerCards.append(dealerCard)
             if upcard:
                 dealerUpcard["A"] = 11
 
@@ -150,12 +149,9 @@ def optimalMove(playerTotal, dealerTotal):
         else:
             return ["h", "hit", "H", "Hit"]
     else:
-        if playerTotal == 21 or (playerTotal == 20 or playerTotal == 19) and upcard[0] != 6 or (playerTotal == 18 and upcard[0] == 7 or upcard[0] == 8):
+        if playerTotal == 20 or playerTotal == 19 and upcard[0] != 6 or (playerTotal == 18 and upcard[0] == 7 or upcard[0] == 8):
             return ["s", "stand", "S", "Stand"]
-        elif playerTotal == 19 and upcard[0] == 6 or (playerTotal == 18 and upcard[0] >= 2 or upcard[0] <= 6) or (playerTotal == 17 and upcard[0] >= 3 or upcard[0] <= 6) or (playerTotal == 16 or playerTotal == 15 and upcard[0] >= 4 or upcard[0] <= 6) or (playerTotal == 14 or playerTotal == 13 and upcard[0] == 5 or upcard[0] == 6):
-            return ["d", "double", "D", "Double"]
-        else:
-            return ["h", "hit", "H", "Hit"]
+
 
 
 def playBlackjack(bet):
@@ -183,7 +179,7 @@ def playBlackjack(bet):
 
     # Player's turn
     while True:
-        # Allows user to hit, stand, or double
+        # Allows user to hit or stand
         decision = input("Hit (h/hit), Stand (s/stand), or Double (d/double): ")
         if decision in optimalMove(playerTotal, dealerTotal):
             print("Correct decision")
@@ -194,15 +190,14 @@ def playBlackjack(bet):
             playerDeal()
             if playerTotal > 21:
                 if "A" in playerCards[0] or "A" in playerCards[1]:
-                    aces = playerCards.count()
-                    for i in range(aces):
-                        playerCards.remove("A")
+                    playerCards.remove("A")
                     playerTotal -= 10
                     continue
                 else:
                     drawCard(dealerCard, dealerCardLoc, 200)  
                     print("Bust, you lose")
                     playerBust = True
+<<<<<<< HEAD
                     if double:
                         bank -= bet * 2
                     else:
@@ -224,6 +219,9 @@ def playBlackjack(bet):
                         bank -= bet * 2
                     else:
                         bank -= bet
+=======
+                    bank -= bet
+>>>>>>> e988dc0afb8362e1eda9bc4a8505201a48020f53
                     break
         elif decision in ["s", "stand", "S", "Stand"]:
             break
@@ -236,6 +234,7 @@ def playBlackjack(bet):
         drawCard(dealerCard, dealerCardLoc, 200)  
         dealerCardLoc += 120      
         while True:  
+            # Draws card if total is < 17
             if dealerTotal == 21 and "A" in dealerCards:
                 if playerTotal == 21 and "A" in playerCards:
                     print("Tie")
@@ -291,7 +290,7 @@ def playBlackjack(bet):
                 break
 
 
-# Runs blackjack 
+# Runs blackjack until the user says to stop
 while True:
     playerCardLoc = -300
     dealerCardLoc = -300
@@ -301,33 +300,19 @@ while True:
     dealerCards = []
     dealerUpcard = {}
     print("Bank:", bank)
-    if bank <= 0:
-        print("You ran out of money.")
-        break
     while True:
-        try:
-            bet = int(input("How much do you want to bet? (Max: 500): "))
-            if bet > 500 or bet < 1 or bet > bank:
-                print("Invalid bet")
-            else:
-                break
-        except ValueError:
-            print("Invalid input")
-
+        bet = int(input("How much do you want to bet? (Max: 500): "))
+        if bet > 500 or bet < 1:
+            print("Invalid bet")
+        else:
+            break
     playBlackjack(bet)
     print("Bank:", bank)
 
     # Count request?
-    while True:
-        try:
-            askCount = int(input("What is the count? "))
-            break
-        except ValueError:
-            print("Invalid input")
-    if askCount == count:
-        print("Correct.")
-    else:
-        print("Incorrect, the count is:", count)
+    countReq = input("Display count? (y/yes) or (n/no): ")
+    if countReq in ["y", "yes", "Y", "Yes"]:
+        print("Count:", count)
     
     # Keep playing?
     again = input("Keep playing? (y/yes) or (n/no): ")
@@ -336,7 +321,7 @@ while True:
         continue
     elif again in ["n", "no", "N", "No"]:
         break
-    
+
 
 
 
