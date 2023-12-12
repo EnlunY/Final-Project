@@ -13,6 +13,7 @@ tortoise.speed(-1)
 tortoise.stamp()
 tortoise.hideturtle()
 
+c = turtle.getcanvas()
 bob = turtle.Turtle()
 bob.ht()
 bob.speed(-1)
@@ -50,13 +51,13 @@ def drawCard(card, x, y, faceDown=False):
     bob.end_fill()
     bob.up()
     if not faceDown:
-        bob.setheading(0)
-        bob.forward(55)
-        bob.setheading(270)
-        bob.forward(76)
         bob.color("black")
-        bob.write(card, align="center", font=("Arial", 50, "normal"))
-
+        bob.setheading(0)
+        bob.forward(20)
+        bob.setheading(270)
+        bob.forward(48)
+        bob.write(card, align="center", font=("Arial", 40, "normal"))
+        c.create_text(x + 80, -y + 140, text=card, angle=180, font=("Arial", 40, "normal"), fill="black", tag="num")
 
 def playerDeal():
     global playerCardLoc
@@ -332,7 +333,7 @@ while True:
     # Count request?
     while True:
         try:
-            askCount = int(input("What is the count? "))
+            askCount = int(input("What is the count?: "))
             break
         except ValueError:
             print("Invalid input")
@@ -344,6 +345,7 @@ while True:
     # Keep playing?
     again = input("Keep playing? (y/yes) or (n/no): ")
     if again in ["y", "yes", "Y", "Yes"]:
+        c.delete("num")
         bob.clear()
         continue
     elif again in ["n", "no", "N", "No"]:
