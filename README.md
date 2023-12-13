@@ -1,3 +1,3 @@
 # Final-Project
 Blackjack Card Counting Trainer
-https://youtu.be/FIi9ZIEE4Kg
+https://www.youtube.com/watch?v=zh_bJKiUbk4
