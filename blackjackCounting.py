@@ -304,6 +304,7 @@ def playBlackjack(bet):
                 break
 
 
+
 # Runs blackjack 
 while True:
     playerCardLoc = -300
